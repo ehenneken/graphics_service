@@ -78,7 +78,7 @@ class TestExpectedResults(TestCase):
                          cols_expect)
 
     @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data))
-    def test_query(self, mock_execute_SQL_query):
+    def test_query_with_scixid(self, mock_execute_SQL_query):
         '''Query endpoint with bibcode from stub data should
            return expected results'''
         url = url_for('graphics', identifier='scix:5EZ7-KFJK-SXW9')
@@ -86,6 +86,18 @@ class TestExpectedResults(TestCase):
         self.assertTrue(r.status_code == 200)
         self.assertTrue(r.json.get('figures') == figure_data)
         self.assertTrue(r.json.get('scix_id') == 'scix:5EZ7-KFJK-SXW9')
+
+    @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data))
+    def test_query_with_bibcode(self, mock_execute_SQL_query):
+        '''Query endpoint with bibcode from stub data should
+           return expected results'''
+        url = url_for('graphics', identifier='9999BBBBBVVVVQPPPPI')
+        r = self.client.get(url)
+        self.assertTrue(r.status_code == 200)
+        self.assertTrue(r.json.get('figures') == figure_data)
+        self.assertTrue(r.json.get('scix_id') == 'scix:5EZ7-KFJK-SXW9')
+        # The bibcode is still returned for backwards compatibility and testing
+        self.assertTrue(r.json.get('bibcode') == '9999BBBBBVVVVQPPPPI')
 
     @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data_no_thumb, source='IOP'))
     def test_query_no_thumbnail(self, mock_execute_SQL_query):

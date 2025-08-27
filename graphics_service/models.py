@@ -5,7 +5,7 @@ Created on Nov 2, 2014
 '''
 
 import simplejson as json
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, or_
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
@@ -52,8 +52,9 @@ class GraphicsModel(Base):
 
 def execute_SQL_query(ident):
     with current_app.session_scope() as session:
+        # Filter against both scix_id and bibcode columns for backwards compatibility
         resp = session.query(GraphicsModel).filter(
-             GraphicsModel.scix_id == ident).one()
+             or_(GraphicsModel.scix_id == ident, GraphicsModel.bibcode == ident)).one()
         results = json.loads(json.dumps(resp, cls=AlchemyEncoder))
         return results
 
