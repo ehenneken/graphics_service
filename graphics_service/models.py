@@ -41,6 +41,7 @@ class GraphicsModel(Base):
     __tablename__ = 'graphics'
     id = Column(Integer, primary_key=True)
     bibcode = Column(String, nullable=False, index=True)
+    scix_id = Column(String(19), nullable=True, unique=True, index=True)
     doi = Column(String)
     source = Column(String)
     eprint = Column(Boolean)
@@ -49,18 +50,18 @@ class GraphicsModel(Base):
     baseurl = Column(String)
     modtime = Column(DateTime)
 
-def execute_SQL_query(bibc):
+def execute_SQL_query(ident):
     with current_app.session_scope() as session:
         resp = session.query(GraphicsModel).filter(
-             GraphicsModel.bibcode == bibc).one()
+             GraphicsModel.scix_id == ident).one()
         results = json.loads(json.dumps(resp, cls=AlchemyEncoder))
         return results
 
-def get_graphics_record(bibcode):
+def get_graphics_record(identifier):
     try:
-        res = execute_SQL_query(bibcode)
+        res = execute_SQL_query(identifier)
     except NoResultFound:
-        res = {'Error': 'Unable to get results!', 'Error Info': 'No database entry found for %s' % bibcode}
+        res = {'Error': 'Unable to get results!', 'Error Info': 'No database entry found for %s' % identifier}
     except Exception as err:
-        res = {'Error': 'Unable to get results!', 'Error Info': 'Graphics query failed for %s: %s'%(bibcode, err)}
+        res = {'Error': 'Unable to get results!', 'Error Info': 'Graphics query failed for %s: %s'%(identifier, err)}
     return res
