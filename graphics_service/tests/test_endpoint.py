@@ -150,11 +150,11 @@ class TestExpectedResults(TestCase):
         expected = {u'Error Info': u'No thumbnail data for foo', u'Error': u'Unable to get results!'}
         self.assertTrue(r.json == expected)
 
-    @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data, source='IOPscience'))
+    @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data, source='AAS'))
     def test_query_IOPScience(self, mock_execute_SQL_query):
         '''Query endpoint with bibcode from stub data should
            return expected results'''
-        header = self.app.config.get('GRAPHICS_HEADER').get('IOPscience')
+        header = self.app.config.get('GRAPHICS_HEADER').get('AAS')
         url = url_for('graphics', identifier='scix:5EZ7-KFJK-SXW9')
         r = self.client.get(url)
         self.assertTrue(r.status_code == 200)
