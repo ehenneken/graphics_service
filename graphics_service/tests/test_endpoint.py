@@ -18,10 +18,10 @@ import simplejson as json
 import mock
 from datetime import datetime
 
-def get_testdata(figures = [], thumbnails=[], source='TEST'):
+def get_testdata(figures = [], thumbnails=[], source='TEST', bibcode='9999BBBBBVVVVQPPPPI'):
     thumbs = [(f['images'][0].get('thumbnail',''),f['images'][0].get('thumnail','')) for f in figures]
     g = GraphicsModel(
-        bibcode='9999BBBBBVVVVQPPPPI',
+        bibcode=bibcode,
         scix_id='scix:5EZ7-KFJK-SXW9',
         doi='DOI',
         source=source,
@@ -79,7 +79,17 @@ class TestExpectedResults(TestCase):
 
     @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data))
     def test_query_with_scixid(self, mock_execute_SQL_query):
-        '''Query endpoint with bibcode from stub data should
+        '''Query endpoint with SciX ID from stub data should
+           return expected results'''
+        url = url_for('graphics', identifier='scix:5EZ7-KFJK-SXW9')
+        r = self.client.get(url)
+        self.assertTrue(r.status_code == 200)
+        self.assertTrue(r.json.get('figures') == figure_data)
+        self.assertTrue(r.json.get('scix_id') == 'scix:5EZ7-KFJK-SXW9')
+
+    @mock.patch('graphics_service.models.execute_SQL_query', return_value=get_testdata(figures=figure_data, bibcode=None))
+    def test_query_with_scixid_without_bibcode(self, mock_execute_SQL_query):
+        '''Query endpoint with SciX ID from stub data should
            return expected results'''
         url = url_for('graphics', identifier='scix:5EZ7-KFJK-SXW9')
         r = self.client.get(url)

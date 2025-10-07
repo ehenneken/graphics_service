@@ -8,7 +8,7 @@ import simplejson as json
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, or_
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.dialects import postgresql
 from flask_sqlalchemy import SQLAlchemy
 from flask import current_app
@@ -63,6 +63,8 @@ def get_graphics_record(identifier):
         res = execute_SQL_query(identifier)
     except NoResultFound:
         res = {'Error': 'Unable to get results!', 'Error Info': 'No database entry found for %s' % identifier}
+    except MultipleResultsFound:
+        res = {'Error': 'Unable to get results!', 'Error Info': 'Multiple results were found for %s' % identifier}
     except Exception as err:
         res = {'Error': 'Unable to get results!', 'Error Info': 'Graphics query failed for %s: %s'%(identifier, err)}
     return res

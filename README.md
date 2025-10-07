@@ -12,4 +12,4 @@ and do a request from the command line like so
 
 	curl http://localhost:4000/<identifier>
 
-and you should get back graphics data. The identifier supplied should either be a bibcode or a SciX ID.
+and you should get back graphics data. The identifier supplied should either be a bibcode or a SciX ID (example: `scix:9XSY-FJXA-8SQY`).

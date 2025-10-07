@@ -29,7 +29,7 @@ def get_graphics(identifier):
         output['scix_id'] = results['scix_id']
         # We still include the value in the "bibcode" column in the output
         # For backwards compatibility
-        output['bibcode'] = results['bibcode']
+        output['bibcode'] = results.get('bibcode')
         output['number'] = len(results['thumbnails'])
         output['pick'] = graph_link % random.choice(results['thumbnails'])
         if not output['pick'].find('http') >-1:
